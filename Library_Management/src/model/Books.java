@@ -9,8 +9,9 @@ public class Books
     private String category;
     private String status;
     private int quantity;
+    private int price;
     
-    public Books(int bookid, String title, int publishyear, String author, String category, String status, int quantity)
+    public Books(int bookid, String title, int publishyear, String author, String category, String status, int quantity, int price)
     {
         this.bookid = bookid;
         this.title = title;
@@ -19,9 +20,10 @@ public class Books
         this.category = category;
         this.status = status;
         this.quantity = quantity;
+        this.price = price;
     }
     
-    public Books(int bookid, String title, int publishyear, String author, String category, int quantity)
+    public Books(int bookid, String title, int publishyear, String author, String category, int quantity, int price)
     {
         this.bookid = bookid;
         this.title = title;
@@ -29,6 +31,7 @@ public class Books
         this.author = author;
         this.category = category;
         this.quantity = quantity;
+        this.price = price;
     }
     
     public Books(){};
@@ -39,6 +42,7 @@ public class Books
     public void setCategory(String category){ this.category = category;}
     public void setStatus(String status){ this.status = status;}
     public void setQuantity(int quantity){ this.quantity = quantity;}
+    public void setPrice(int price){ this.price = price;}
     
     public int getBookId() { return bookid;}
     public int getPublishYear() { return publishyear;}
@@ -46,5 +50,6 @@ public class Books
     public String getTitle() { return title;}
     public String getAuthor() { return author;}
     public String getCategory() { return category;}
-    public String getStatus() { return status;}    
+    public String getStatus() { return status;}   
+    public int getPrice() { return price;}
 }

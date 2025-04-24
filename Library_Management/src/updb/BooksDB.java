@@ -2,7 +2,7 @@ package updb;
 
 import java.sql.*;
 import util.DBConnection;
-import model.Books;
+import model.*;
 import java.util.*;
 import java.util.Date;
 
@@ -25,11 +25,14 @@ public class BooksDB
                 book.setCategory(rs.getString("category"));
                 book.setStatus(rs.getString("status"));
                 book.setQuantity(rs.getInt("quantity"));
+                book.setPrice(rs.getInt("price"));
                 booklist.add(book);
             }
+            System.out.printf("%-10s | %-10s | %-15s | %-10s | %-10s | %-10s | %-10s | %-10s\n", "BookID", "Tiltle", "PublishYear", "Author", "Category", "Quantity", "Price", "Status");
             for(Books book : booklist)
             {
-                System.out.printf("%d -- %s -- %d -- %s -- %s -- %s -- %d\n", book.getBookId(), book.getTitle(), book.getPublishYear(), book.getAuthor(), book.getCategory(), book.getStatus(), book.getQuantity());
+                System.out.printf("%-10d | %-10s | %-15d | %-10s | %-10s | %-10d | %-10d |%-10s\n", 
+                book.getBookId(), book.getTitle(), book.getPublishYear(), book.getAuthor(), book.getCategory(), book.getQuantity(), book.getPrice(),book.getStatus());
                 
             }
         }
@@ -118,20 +121,26 @@ public class BooksDB
     public static void showHistory(String username) throws SQLException
         {
             String sql = "SELECT * FROM history " +  (!username.isEmpty() ? " WHERE username = ?" : "");
+            List<History> historylist = new ArrayList<>();
             try(Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql))
             {
                 if(!username.isEmpty()) stmt.setString(1, username);
                 ResultSet rs = stmt.executeQuery();
-                System.out.printf("%-20s | %-6s | %-25s | %-25s | %-10s\n","UserName", "BookID", "Borrow_Date", "Return_Date", "Status" );
-                System.out.println("-----------------------------------------------------------------------" );
                 while(rs.next())
                 {
-                    username = rs.getString("username");
-                    String bookid = rs.getInt("bookid") + "";
-                    String borrow_date = rs.getTimestamp("borrow_date") + "";
-                    String return_date = rs.getTimestamp("return_date") + "";
-                    String status = rs.getString("status");
-                    System.out.printf("%-20s | %-6s | %-25s | %-25s | %-10s\n ",username, bookid, borrow_date, return_date, status);
+                    History history = new History();
+                    history.setUsername(rs.getString("username"));
+                    history.setBookId(rs.getInt("bookid"));
+                    history.setRequestDate(rs.getTimestamp("request_date"));
+                    history.setBorrowDate(rs.getTimestamp("borrow_date"));
+                    history.setReturnDate(rs.getTimestamp("return_date"));
+                    history.setStatus(rs.getString("status"));
+                    historylist.add(history);
+                }
+                System.out.printf("%-20s | %-6s | %-25s |%-25s | %-25s | %-10s\n","UserName", "BookID", "Request_Date","Borrow_Date", "Return_Date", "Status" );
+                for(History h : historylist)
+                {
+                    System.out.printf("%-20s | %-6d | %-25s |%-25s | %-25s | %-10s \n ",h.getUsername(), h.getBookId(), h.getRequestDate(), h.getBorrowDate(), h.getReturnDate(), h.getStatus());
                 }
             }
         }

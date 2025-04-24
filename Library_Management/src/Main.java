@@ -70,7 +70,7 @@ public class Main
     {
         System.out.println("\n==== LIBRARY MANAGEMENT SYSTEM ====");
         System.out.println("1. Borrow Books");
-        System.out.println("2. Return Books");
+        System.out.println("2. Renew Books");
         System.out.println("3. History");
         System.out.println("4. Information");//mk, email, phone
         System.out.println("5. Logout");
@@ -84,7 +84,7 @@ public class Main
                 borrowBooks();
                 break;
             case 2:
-                returnBooks();
+//                renewBooks();
                 break;
             case 3:
                 history();
@@ -313,7 +313,9 @@ public class Main
             String category = sc.nextLine(); 
             System.out.print("Enter Quantity: ");
             int quantity = sc.nextInt(); sc.nextLine();
-            Books book = new Books(bookid, title, publishyear, author, category, quantity);
+            System.out.print("Enter Price: ");
+            int price = sc.nextInt(); sc.nextLine();
+            Books book = new Books(bookid, title, publishyear, author, category, quantity, price);
             BooksDB.addBooks(book);
             System.out.println("Added Book Access!");
             AdminMenu();
@@ -339,7 +341,8 @@ public class Main
             BooksDB.updateBooks(bookid, -1);
             Date borrow_date = new Date();
             BooksDB.borrowBooks(saveUserName.toString(), bookid, borrow_date);
-            System.out.println("Borrowed Book Successfully!");
+            System.out.println("Book Borrow Request Successfully Created!");
+            System.out.println("Choose option pay: ");
             UserMenu();
         }
     }

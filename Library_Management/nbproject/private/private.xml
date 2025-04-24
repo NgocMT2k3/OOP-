@@ -7,8 +7,8 @@
             <file>file:/D:/DDDD/Library_Management/Library_Management/src/updb/BooksDB.java</file>
             <file>file:/D:/DDDD/Library_Management/Library_Management/src/updb/AdminsDB.java</file>
             <file>file:/D:/DDDD/Library_Management/Library_Management/src/util/DBConnection.java</file>
-            <file>file:/D:/DDDD/Library_Management/Library_Management/src/updb/LoginDB.java</file>
-            <file>file:/D:/DDDD/Library_Management/Library_Management/src/model/Login.java</file>
+            <file>file:/D:/DDDD/Library_Management/Library_Management/src/model/Books.java</file>
+            <file>file:/D:/DDDD/Library_Management/Library_Management/src/model/History.java</file>
         </group>
     </open-files>
 </project-private>
