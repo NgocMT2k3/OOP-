@@ -96,13 +96,13 @@ public class AdminsDB
         }
     }
     
-    public static void deleteUser(String username) throws SQLException
-    {
-        String sql = "DELETE FROM accounts WHERE username = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql))
-        {
-            stmt.setString(1, username);
-            stmt.executeUpdate();
-        }
-    }
+//    public static void deleteUser(String username) throws SQLException
+//    {
+//        String sql = "DELETE FROM accounts WHERE username = ?";
+//        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql))
+//        {
+//            stmt.setString(1, username);
+//            stmt.executeUpdate();
+//        }
+//    }
 }

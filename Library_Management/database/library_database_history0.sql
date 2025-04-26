@@ -16,29 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `accounts`
+-- Table structure for table `history`
 --
 
-DROP TABLE IF EXISTS `accounts`;
+DROP TABLE IF EXISTS `history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `accounts` (
+CREATE TABLE `history` (
   `username` varchar(50) NOT NULL,
-  `passwords` varchar(50) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `phonenumber` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`username`)
+  `bookid` int NOT NULL,
+  `request_date` timestamp NULL DEFAULT NULL,
+  `borrow_date` timestamp NOT NULL,
+  `return_date` timestamp NULL DEFAULT NULL,
+  `status` varchar(10) GENERATED ALWAYS AS ((case when ((`borrow_date` is not null) and (`return_date` is null)) then _utf8mb4'borrowed' when ((`borrow_date` is not null) and (`return_date` is not null)) then _utf8mb4'returned' end)) STORED,
+  KEY `username` (`username`),
+  KEY `bookid` (`bookid`),
+  CONSTRAINT `history_ibfk_1` FOREIGN KEY (`username`) REFERENCES `accounts` (`username`),
+  CONSTRAINT `history_ibfk_2` FOREIGN KEY (`bookid`) REFERENCES `books` (`bookid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `accounts`
+-- Dumping data for table `history`
 --
 
-LOCK TABLES `accounts` WRITE;
-/*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES ('1','1','1','1'),('ngoc','123','ngoc@gmail.com','0123'),('user1','123','user@gmail.com','0111');
-/*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
+LOCK TABLES `history` WRITE;
+/*!40000 ALTER TABLE `history` DISABLE KEYS */;
+INSERT INTO `history` (`username`, `bookid`, `request_date`, `borrow_date`, `return_date`) VALUES ('ngoc',1,NULL,'2025-04-07 17:00:00',NULL),('ngoc',2,NULL,'2025-04-08 10:44:00',NULL),('ngoc',3,NULL,'2025-04-08 16:47:57','2025-04-08 16:49:05'),('ngoc',1,NULL,'2025-04-21 09:24:11',NULL),('ngoc',2,NULL,'2025-04-21 09:24:52',NULL);
+/*!40000 ALTER TABLE `history` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-27  1:18:19
+-- Dump completed on 2025-04-25  0:03:19

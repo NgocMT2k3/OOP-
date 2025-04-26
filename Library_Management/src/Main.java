@@ -81,7 +81,7 @@ public class Main
         switch (choice)
         {
             case 1:
-                borrowBooks();
+                requestBooks();
                 break;
             case 2:
 //                renewBooks();
@@ -107,7 +107,7 @@ public class Main
     {
         System.out.print("\nEnter Username: ");
         String username = sc.next(); sc.nextLine();
-        if(LoginDB.checkAdd(username) == true)
+        if(LoginDB.checkUserName(username) == true)
         {
             System.out.print("Username Invalid! Please Enter another Username.");
             Signin();
@@ -216,7 +216,7 @@ public class Main
         System.out.println("==== ADMIN SYSTEM ====");
         System.out.println("1. Show User");
         System.out.println("2. Show History User");
-        System.out.println("3. Delete Users");
+        System.out.println("3. Confirm Request");
         System.out.println("4. Exit");
         System.out.print("Choose an option: ");
         
@@ -233,24 +233,20 @@ public class Main
                 String choice2 = sc.next(); sc.nextLine();
                 if(choice2.equals("All"))  
                 {
-                    BooksDB.showHistory("");
+                    HistoryDB.showHistory("");
                     System.out.print("Enter Anything to Exit ");
                     sc.nextLine();
                     usersManagement();
                 }
                 else 
                 {
-                    BooksDB.showHistory(choice2);
+                    HistoryDB.showHistory(choice2);
                     System.out.print("Enter Anything to Exit ");
                     sc.nextLine();
                     usersManagement();
                 }    
             case 3:
-                System.out.print("Enter Uername your want to Delete: ");
-                String username = sc.next(); sc.nextLine();            
-                AdminsDB.deleteUser(username);
-                System.out.println("Deleted Successfully!");
-                usersManagement();
+                confirmRequest();
                 break;
             case 4:
                 AdminMenu();
@@ -322,25 +318,25 @@ public class Main
         }                 
     }
     
-    public static void borrowBooks() throws SQLException
+    public static void requestBooks() throws SQLException
     {
         System.out.print("Enter BookId: ");
         int bookid = sc.nextInt(); sc.nextLine();
-        if(BooksDB.checkBookId(bookid) == false)
+        if(BooksDB.checkBookId(bookid) !=  true)
         {
             System.out.println("This book is not in the library yet! Please Enter another BookId.");
-            borrowBooks();
+            requestBooks();
         }
         else if(BooksDB.checkQuantity(bookid) == false)
         {
             System.out.println("This book is out of stock! Please Enter another BookId.");
-            borrowBooks();
+            requestBooks();
         }
         else 
         {
             BooksDB.updateBooks(bookid, -1);
-            Date borrow_date = new Date();
-            BooksDB.borrowBooks(saveUserName.toString(), bookid, borrow_date);
+            Date request_date = new Date();
+            BooksDB.requestBooks(saveUserName.toString(), bookid, request_date);
             System.out.println("Book Borrow Request Successfully Created!");
             System.out.println("Choose option pay: ");
             UserMenu();
@@ -353,7 +349,7 @@ public class Main
         int bookid = sc.nextInt(); sc.nextLine();
         if(BooksDB.checkBookId(bookid) == false)
         {
-            System.out.println("You haven't borrowed this book!");
+            System.out.println("Unborrowed Book!");
             returnBooks();
         }
         else
@@ -368,7 +364,7 @@ public class Main
     
     public static void history() throws SQLException
     {
-        BooksDB.showHistory(saveUserName.toString());
+        HistoryDB.showHistory(saveUserName.toString());
         UserMenu();
     }
     
@@ -396,6 +392,83 @@ public class Main
                 System.out.println("Changed Successfully!");
             case 2:
                 UserMenu();
+        }
+    }
+    
+    public static void confirmRequest() throws SQLException
+    {
+        System.out.println("1. Borrow Book");
+        System.out.println("2. Return Book");
+        System.out.println("3. Extend Book");
+        System.out.println("4. Exit");
+            
+        System.out.print("Choose an option: ");
+        int choice = sc.nextInt(); sc.nextLine();
+        System.out.print("Enter Uername your want to Confirm: ");
+        String username = sc.next(); sc.nextLine(); 
+        
+        switch (choice)
+        {
+            case 1:
+                if(LoginDB.checkUserName(username) == false ) 
+                    {
+                        System.out.println("Username Invalid! Please Enter another Username.");
+                        confirmRequest();
+                    }
+                HistoryDB.showHistory(username); 
+                while(true)
+                {   
+                    System.out.print("Enter BookID your want to Confirm Borrow: ");
+                    String input = sc.nextLine().trim();
+                    if(input.isEmpty()) break;
+                    int bookid = Integer.parseInt(input);
+                    Date borrow_date = new Date();
+                    BooksDB.borrowBooks( bookid, borrow_date);
+                    HistoryDB.showHistory(username); 
+                }
+                confirmRequest();
+                break;
+            case 2:
+                if(LoginDB.checkUserName(username) == false ) 
+                    {
+                        System.out.println("Username Invalid! Please Enter another Username.");
+                        confirmRequest();
+                    }
+                HistoryDB.showHistory(username); 
+                while(true)
+                {                    
+                    System.out.print("Enter BookID your want to Confirm Return: ");
+                    String input = sc.nextLine().trim();
+                    if(input.isEmpty()) break;
+                    int bookid = Integer.parseInt(input);
+                    Date return_date = new Date();
+                    BooksDB.returnBooks( bookid, return_date);
+                    HistoryDB.showHistory(username); 
+                }
+                confirmRequest();
+                break;
+            case 3:
+                if(LoginDB.checkUserName(username) == false ) 
+                    {
+                        System.out.println("Username Invalid! Please Enter another Username.");
+                        confirmRequest();
+                    }
+                HistoryDB.showHistory(username); 
+                while(true)
+                {                    
+                    System.out.print("Enter BookID your want to Confirm Extend: ");
+                    String input = sc.nextLine().trim();
+                    if(input.isEmpty()) break;
+                    int bookid = Integer.parseInt(input);
+                    Date borrow_date = new Date();
+                    BooksDB.borrowBooks( bookid, borrow_date);
+                    HistoryDB.showHistory(username); 
+                }
+                confirmRequest();
+                break;
+            case 4:
+                usersManagement();
+                break;
         }
     }
 }

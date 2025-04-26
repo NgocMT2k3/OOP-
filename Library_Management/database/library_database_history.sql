@@ -26,7 +26,7 @@ CREATE TABLE `history` (
   `username` varchar(50) NOT NULL,
   `bookid` int NOT NULL,
   `request_date` timestamp NULL DEFAULT NULL,
-  `borrow_date` timestamp NOT NULL,
+  `borrow_date` timestamp NULL DEFAULT NULL,
   `return_date` timestamp NULL DEFAULT NULL,
   `status` varchar(10) GENERATED ALWAYS AS ((case when ((`borrow_date` is not null) and (`return_date` is null)) then _utf8mb4'borrowed' when ((`borrow_date` is not null) and (`return_date` is not null)) then _utf8mb4'returned' end)) STORED,
   KEY `username` (`username`),
@@ -42,9 +42,34 @@ CREATE TABLE `history` (
 
 LOCK TABLES `history` WRITE;
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
-INSERT INTO `history` (`username`, `bookid`, `request_date`, `borrow_date`, `return_date`) VALUES ('ngoc',1,NULL,'2025-04-07 17:00:00',NULL),('ngoc',2,NULL,'2025-04-08 10:44:00',NULL),('ngoc',3,NULL,'2025-04-08 16:47:57','2025-04-08 16:49:05');
+INSERT INTO `history` (`username`, `bookid`, `request_date`, `borrow_date`, `return_date`) VALUES ('ngoc',4,'2025-04-26 17:38:08','2025-04-26 17:47:02','2025-04-26 17:48:23'),('1',1,'2025-04-26 18:02:23','2025-04-26 18:07:16','2025-04-26 18:07:35'),('1',2,'2025-04-26 18:02:26','2025-04-26 18:06:55',NULL),('1',3,'2025-04-26 18:02:28','2025-04-26 18:06:56',NULL);
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_trigger` BEFORE INSERT ON `history` FOR EACH ROW BEGIN
+    IF NEW.return_date IS NOT NULL THEN
+        SET NEW.status = 'returned';
+    ELSEIF NEW.borrow_date IS NOT NULL THEN
+        SET NEW.status = 'borrowed';
+    ELSEIF NEW.request_date IS NOT NULL THEN
+        SET NEW.status = 'requested';
+    ELSE
+        SET NEW.status = NULL; -- Hoặc trạng thái mặc định khác nếu muốn
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -55,4 +80,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-21 13:12:56
+-- Dump completed on 2025-04-27  1:18:19

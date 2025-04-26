@@ -16,29 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `accounts`
+-- Table structure for table `books`
 --
 
-DROP TABLE IF EXISTS `accounts`;
+DROP TABLE IF EXISTS `books`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `accounts` (
-  `username` varchar(50) NOT NULL,
-  `passwords` varchar(50) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `phonenumber` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`username`)
+CREATE TABLE `books` (
+  `bookid` int NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `publishyear` int NOT NULL,
+  `author` varchar(50) NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `quantity` int NOT NULL,
+  `price` int DEFAULT NULL,
+  `status` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`bookid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `accounts`
+-- Dumping data for table `books`
 --
 
-LOCK TABLES `accounts` WRITE;
-/*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES ('1','1','1','1'),('ngoc','123','ngoc@gmail.com','0123'),('user1','123','user@gmail.com','0111');
-/*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
+LOCK TABLES `books` WRITE;
+/*!40000 ALTER TABLE `books` DISABLE KEYS */;
+INSERT INTO `books` VALUES (1,'java',2023,'ngoc','tech',0,NULL,'disable'),(2,'c++',2023,'ngoc','tech',4,NULL,'enable'),(3,'c#',2023,'ngoc','tech',3,NULL,'enable'),(4,'javascript',2023,'ngoc','tech',4,NULL,'enable'),(5,'c',2023,'ngoc','tech',0,NULL,'disable');
+/*!40000 ALTER TABLE `books` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-27  1:18:19
+-- Dump completed on 2025-04-25  0:03:19

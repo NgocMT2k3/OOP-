@@ -37,7 +37,7 @@ CREATE TABLE `accounts` (
 
 LOCK TABLES `accounts` WRITE;
 /*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES ('1','1','1','1'),('ngoc','123','ngoc@gmail.com','0123'),('user1','123','user@gmail.com','0111');
+INSERT INTO `accounts` VALUES ('ngoc','123','ngoc@gmail.com','0123'),('user1','123','user@gmail.com','0111');
 /*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-27  1:18:19
+-- Dump completed on 2025-04-25  0:03:19

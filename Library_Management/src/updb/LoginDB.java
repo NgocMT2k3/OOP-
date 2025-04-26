@@ -20,7 +20,7 @@ public class LoginDB
         }
     }
     
-    public static boolean checkAdd(String username) throws SQLException
+    public static boolean checkUserName(String username) throws SQLException
     {
         String sql = "SELECT COUNT(*) FROM accounts WHERE username = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql))

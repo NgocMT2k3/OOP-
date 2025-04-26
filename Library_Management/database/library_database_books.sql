@@ -28,9 +28,9 @@ CREATE TABLE `books` (
   `publishyear` int NOT NULL,
   `author` varchar(50) NOT NULL,
   `category` varchar(100) NOT NULL,
-  `status` varchar(10) GENERATED ALWAYS AS (if((`quantity` > 0),_utf8mb4'enable',_utf8mb4'disable')) STORED,
   `quantity` int NOT NULL,
   `price` int DEFAULT NULL,
+  `status` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`bookid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -41,9 +41,51 @@ CREATE TABLE `books` (
 
 LOCK TABLES `books` WRITE;
 /*!40000 ALTER TABLE `books` DISABLE KEYS */;
-INSERT INTO `books` (`bookid`, `title`, `publishyear`, `author`, `category`, `quantity`, `price`) VALUES (1,'java',2023,'ngoc','tech',1,NULL),(2,'c++',2023,'ngoc','tech',5,NULL),(3,'c#',2023,'ngoc','tech',3,NULL),(4,'javascript',2023,'ngoc','tech',4,NULL),(5,'c',2023,'ngoc','tech',0,NULL);
+INSERT INTO `books` VALUES (1,'java',2023,'ngoc','tech',1,NULL,'enable'),(2,'c++',2023,'ngoc','tech',1,NULL,'enable'),(3,'c#',2023,'ngoc','tech',1,NULL,'enable'),(4,'javascript',2023,'ngoc','tech',3,NULL,'enable'),(5,'c',2023,'ngoc','tech',-132,NULL,'enable'),(6,'math',2010,'abc','math',3,10000,'enable'),(7,'Photo',2000,'xyz','nature',2,12345,'enable');
 /*!40000 ALTER TABLE `books` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_after_quantity_change` BEFORE INSERT ON `books` FOR EACH ROW BEGIN
+    IF NEW.quantity = 0 THEN
+        SET NEW.status = 'disable';
+    ELSE
+        SET NEW.status = 'enable';
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_after_quantity_update` BEFORE UPDATE ON `books` FOR EACH ROW BEGIN
+    IF NEW.quantity = 0 THEN
+        SET NEW.status = 'disable';
+    ELSE
+        SET NEW.status = 'enable';
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -54,4 +96,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-21 13:12:57
+-- Dump completed on 2025-04-27  1:18:19
