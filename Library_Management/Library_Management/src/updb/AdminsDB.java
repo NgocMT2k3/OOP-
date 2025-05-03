@@ -90,9 +90,12 @@ public class AdminsDB
             }
             
         }
+        System.out.printf("%-20s | %-20s | %-30s | %-15s\n", "UserName", "PassWord", "Email", "PhoneNumber");
         for(Login account : userlist)
         {
-            System.out.printf("%s -- %s  -- %s -- %s\n", account.getUsername(), account.getPassword(), account.getEmail(), account.getPhonenumber());
+            System.out.printf("%-20s | %-20s | %-30s | %-15s", 
+                    account.getUsername(), account.getPassword(), account.getEmail(), account.getPhonenumber());
+            System.out.println();
         }
     }
     

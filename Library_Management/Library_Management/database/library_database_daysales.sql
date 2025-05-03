@@ -16,27 +16,26 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `admins`
+-- Table structure for table `daysales`
 --
 
-DROP TABLE IF EXISTS `admins`;
+DROP TABLE IF EXISTS `daysales`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `admins` (
-  `adminname` varchar(50) NOT NULL,
-  `passwords` varchar(50) NOT NULL,
-  PRIMARY KEY (`adminname`)
+CREATE TABLE `daysales` (
+  `day` date DEFAULT NULL,
+  `sales` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `admins`
+-- Dumping data for table `daysales`
 --
 
-LOCK TABLES `admins` WRITE;
-/*!40000 ALTER TABLE `admins` DISABLE KEYS */;
-INSERT INTO `admins` VALUES ('admin','admin'),('admin1','admin1'),('admin12','admin12'),('admin2','admin2'),('admin3','admin3'),('admin4','admin4');
-/*!40000 ALTER TABLE `admins` ENABLE KEYS */;
+LOCK TABLES `daysales` WRITE;
+/*!40000 ALTER TABLE `daysales` DISABLE KEYS */;
+INSERT INTO `daysales` VALUES ('2025-05-04',554440),('2025-05-05',NULL),('2025-05-06',NULL),('2025-05-03',NULL),('2025-05-04',89760);
+/*!40000 ALTER TABLE `daysales` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -48,4 +47,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-04  1:46:26
+-- Dump completed on 2025-05-04  1:46:27

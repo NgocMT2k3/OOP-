@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: library_database
 -- ------------------------------------------------------
--- Server version	8.0.41
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,16 +23,14 @@ DROP TABLE IF EXISTS `history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `history` (
-  `username` varchar(50) NOT NULL,
-  `bookid` int NOT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `bookid` int DEFAULT NULL,
+  `price` int DEFAULT NULL,
   `request_date` timestamp NULL DEFAULT NULL,
   `borrow_date` timestamp NULL DEFAULT NULL,
+  `renew_date` timestamp NULL DEFAULT NULL,
   `return_date` timestamp NULL DEFAULT NULL,
-  `status` varchar(10) GENERATED ALWAYS AS ((case when ((`borrow_date` is not null) and (`return_date` is null)) then _utf8mb4'borrowed' when ((`borrow_date` is not null) and (`return_date` is not null)) then _utf8mb4'returned' end)) STORED,
-  KEY `username` (`username`),
-  KEY `bookid` (`bookid`),
-  CONSTRAINT `history_ibfk_1` FOREIGN KEY (`username`) REFERENCES `accounts` (`username`),
-  CONSTRAINT `history_ibfk_2` FOREIGN KEY (`bookid`) REFERENCES `books` (`bookid`)
+  `status` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -42,7 +40,7 @@ CREATE TABLE `history` (
 
 LOCK TABLES `history` WRITE;
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
-INSERT INTO `history` (`username`, `bookid`, `request_date`, `borrow_date`, `return_date`) VALUES ('ngoc',4,'2025-04-26 17:38:08','2025-04-26 17:47:02','2025-04-26 17:48:23'),('1',1,'2025-04-26 18:02:23','2025-04-26 18:07:16','2025-04-26 18:07:35'),('1',2,'2025-04-26 18:02:26','2025-04-26 18:06:55',NULL),('1',3,'2025-04-26 18:02:28','2025-04-26 18:06:56',NULL);
+INSERT INTO `history` VALUES ('ngoc',1,98000,'2025-05-03 18:33:05','2025-05-03 18:38:49','2025-05-03 18:35:22',NULL,NULL),('ngoc',2,84550,'2025-05-03 18:33:08','2025-05-03 18:33:28',NULL,NULL,NULL),('ngoc',3,86130,'2025-05-03 18:33:09','2025-05-03 18:33:29',NULL,NULL,NULL),('ngoc',4,89760,'2025-05-03 18:33:11','2025-05-03 18:41:25',NULL,NULL,NULL),('ngoc1',1,98000,'2025-05-03 18:38:13','2025-05-03 18:38:49',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -54,15 +52,73 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_trigger` BEFORE INSERT ON `history` FOR EACH ROW BEGIN
-    IF NEW.return_date IS NOT NULL THEN
-        SET NEW.status = 'returned';
-    ELSEIF NEW.borrow_date IS NOT NULL THEN
-        SET NEW.status = 'borrowed';
-    ELSEIF NEW.request_date IS NOT NULL THEN
-        SET NEW.status = 'requested';
-    ELSE
-        SET NEW.status = NULL; -- Hoặc trạng thái mặc định khác nếu muốn
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_price_on_insert` BEFORE INSERT ON `history` FOR EACH ROW BEGIN
+    DECLARE book_price DECIMAL(10,2);
+
+    -- Lấy giá từ bảng books theo bookid
+    SELECT price INTO book_price
+    FROM books
+    WHERE bookid = NEW.bookid;
+
+    -- Gán giá cho trường price của dòng mới
+    SET NEW.price = book_price;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_sales_on_borrow` AFTER UPDATE ON `history` FOR EACH ROW BEGIN
+    -- Chỉ thực hiện nếu borrow_date được cập nhật (tức là khác giá trị cũ)
+    IF NEW.borrow_date IS NOT NULL AND OLD.borrow_date IS NULL THEN
+        -- Cập nhật sales nếu đã có ngày
+        UPDATE daysales
+        SET sales = IFNULL(sales, 0) + (
+            SELECT price FROM books WHERE bookid = NEW.bookid
+        )
+        WHERE DATE(day) = DATE(NEW.borrow_date);
+
+        -- Nếu không có ngày tương ứng trong sales_report, có thể thêm dòng mới (tùy ý)
+        -- INSERT IGNORE INTO sales_report (day, sales)
+        -- VALUES (DATE(NEW.borrow_date), (SELECT price FROM books WHERE bookid = NEW.bookid));
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_sales_on_renew` AFTER UPDATE ON `history` FOR EACH ROW BEGIN
+    -- Chỉ thực hiện nếu borrow_date được cập nhật (tức là khác giá trị cũ)
+    IF NEW.renew_date IS NOT NULL AND OLD.renew_date IS NULL THEN
+        -- Cập nhật sales nếu đã có ngày
+        UPDATE daysales
+        SET sales = IFNULL(sales, 0) + (
+            SELECT price FROM books WHERE bookid = NEW.bookid
+        )
+        WHERE DATE(day) = DATE(NEW.renew_date);
+
+        -- Nếu không có ngày tương ứng trong sales_report, có thể thêm dòng mới (tùy ý)
+        -- INSERT IGNORE INTO sales_report (day, sales)
+        -- VALUES (DATE(NEW.borrow_date), (SELECT price FROM books WHERE bookid = NEW.bookid));
     END IF;
 END */;;
 DELIMITER ;
@@ -80,4 +136,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-27  1:18:19
+-- Dump completed on 2025-05-04  1:46:26

@@ -44,7 +44,8 @@ public class Main
         System.out.println("1. Admins Management");
         System.out.println("2. Users Managemant");
         System.out.println("3. Books Management"); 
-        System.out.println("4. Exit");
+        System.out.println("4. Category Management");
+        System.out.println("5. Exit");
         System.out.print("Choose an option: ");
         
         int choice = sc.nextInt(); sc.nextLine();
@@ -60,7 +61,8 @@ public class Main
                 booksManagement();
                 break;
             case 4: 
-                addBooks();
+                categoryManagement();
+                break;
             case 5:
                LoginMenu();
         }
@@ -72,8 +74,9 @@ public class Main
         System.out.println("1. Borrow Books");
         System.out.println("2. Renew Books");
         System.out.println("3. History");
-        System.out.println("4. Information");//mk, email, phone
-        System.out.println("5. Logout");
+        System.out.println("4. Book Reviews");
+        System.out.println("5. Information");
+        System.out.println("6. Logout");
         System.out.print("Choose an option: ");
         
         int choice = sc.nextInt(); sc.nextLine();
@@ -84,17 +87,65 @@ public class Main
                 requestBooks();
                 break;
             case 2:
-//                renewBooks();
+                System.out.print("Enter BookID your want to Confirm Renew: ");
+                String input = sc.nextLine().trim();
+                if(input.isEmpty()) break;
+                int bookid = Integer.parseInt(input);
+                if(BooksDB.checkRenewDate(bookid) == true)
+                {
+                    System.out.println("You have renewed this book once. Please go to the library to renew it again.");
+                    UserMenu();
+                }
+                Date renew_date = new Date();
+                BooksDB.renewBooks( bookid, renew_date);
+                UserMenu();
                 break;
             case 3:
                 history();
                 break;
             case 4:
-                information();
+                System.out.println("\n--- Book Reviews ---");
+                System.out.println("1. Add Review");
+                System.out.println("2. View Reviews");
+                System.out.println("3. Edit Review");
+                System.out.println("4. Delete Review");
+                System.out.println("5. Back");
+                System.out.print("Choose: ");
+                int rv = sc.nextInt(); sc.nextLine();
+
+                switch (rv) {
+                    case 1:
+                        addReview();
+                        break;
+                        
+                    case 2:                   
+                        BookReviewDB.getAllReviews();
+                        break;
+
+                    case 3:
+                        editReview();
+                        break;
+
+                    case 4:
+                        deleteReview();
+                        break;
+
+                    case 5:
+                        UserMenu();
+                        break;
+
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                        break;
+                    }
+                UserMenu();
                 break;
             case 5:
-                LoginMenu();
+                information();
+                break;
+            case 6:
                 saveUserName.setLength(0);
+                LoginMenu();
                 break;
         }
     }
@@ -225,8 +276,6 @@ public class Main
         {
             case 1: 
                 AdminsDB.showUser("");
-                System.out.println("Enter Enything to Exit ");
-                sc.nextLine();
                 usersManagement();
             case 2:
                 System.out.print("Enter Username your want to show History (Enter 'All' to show all): ");
@@ -259,7 +308,8 @@ public class Main
         System.out.println("1. Show Books");
         System.out.println("2. Update Books");
         System.out.println("3. Add Books");
-        System.out.println("4. Exit");
+        System.out.println("4. ManagePromotion");
+        System.out.println("5. Exit");
         System.out.print("Choose an option: ");
         
         int choice = sc.nextInt(); sc.nextLine();
@@ -268,8 +318,6 @@ public class Main
         {
             case 1:
                 BooksDB.showBooks();
-                System.out.print("Enter Enything to Exit ");
-                sc.nextLine();
                 booksManagement();
             case 2:
                 System.out.print("Enter BookId: ");
@@ -283,6 +331,9 @@ public class Main
                 addBooks();
                 break;
             case 4:
+                ManagePromotion();
+                break;
+            case 5:
                 AdminMenu();
                 break;
         }
@@ -318,6 +369,61 @@ public class Main
         }                 
     }
     
+    public static void ManagePromotion() throws SQLException 
+    {
+        System.out.println("\n==== PROMOTION MANAGEMENT ====");
+        System.out.println("1. Show Promotions");
+        System.out.println("2. Add Promotion");
+        System.out.println("3. Update Promotion");
+        System.out.println("4. Delete Promotion");
+        System.out.println("5. Back");
+        System.out.print("Choose: ");
+
+        int choice = sc.nextInt(); sc.nextLine();
+        switch (choice) 
+        {
+            case 1:
+                PromotionDB.getAllPromotions();
+                break;
+
+            case 2:
+                System.out.print("Enter Book ID: ");
+                int bookId = sc.nextInt(); sc.nextLine();
+                System.out.print("Enter Discount Percent (e.g., 20): ");
+                int discount = sc.nextInt(); sc.nextLine();
+                Promotion newPromo = new Promotion(bookId, discount);
+                PromotionDB.addPromotion(newPromo);
+                System.out.println("✅ Promotion added.");
+                break;
+
+            case 3:
+                System.out.print("Enter Book ID to update promotion: ");
+                int updateId = sc.nextInt(); sc.nextLine();
+                System.out.print("Enter New Discount Percent: ");
+                int newDiscount = sc.nextInt(); sc.nextLine();
+                Promotion updatePromo = new Promotion(updateId, newDiscount);
+                PromotionDB.updatePromotion(updatePromo);
+                System.out.println("✅ Promotion updated.");
+                break;
+
+            case 4:
+                System.out.print("Enter Book ID to delete promotion: ");
+                int delId = sc.nextInt(); sc.nextLine();
+                PromotionDB.deletePromotion(delId);
+                System.out.println("✅ Promotion deleted.");
+                break;
+
+            case 5:
+                AdminMenu();
+                return;
+
+            default:
+                System.out.println("❌ Invalid option.");
+        }
+
+        ManagePromotion();
+    }
+    
     public static void requestBooks() throws SQLException
     {
         System.out.print("Enter BookId: ");
@@ -343,22 +449,68 @@ public class Main
         }
     }
         
+    public static void borrowBooks() throws SQLException
+    {
+        System.out.print("Enter Uername your want to Confirm: ");
+        String username = sc.next(); sc.nextLine(); 
+        if(LoginDB.checkUserName(username) == false ) 
+        {
+            System.out.println("Username Invalid! Please Enter another Username.");
+            borrowBooks();
+        }
+        HistoryDB.showHistory(username); 
+        while(true)
+        {   
+            System.out.print("Enter BookID your want to Confirm Borrow: ");
+            String input = sc.nextLine().trim();
+            if(input.isEmpty()) break;
+            int bookid = Integer.parseInt(input);
+            Date borrow_date = new Date();
+            BooksDB.borrowBooks( bookid, borrow_date);
+            HistoryDB.showHistory(username); 
+        }
+    }
     public static void returnBooks() throws SQLException
     {
-        System.out.print("Enter BookId: ");
-        int bookid = sc.nextInt(); sc.nextLine();
-        if(BooksDB.checkBookId(bookid) == false)
+        System.out.print("Enter Uername your want to Confirm: ");
+        String username = sc.next(); sc.nextLine(); 
+        if(LoginDB.checkUserName(username) == false ) 
         {
-            System.out.println("Unborrowed Book!");
+            System.out.println("Username Invalid! Please Enter another Username.");
             returnBooks();
         }
-        else
-        {
-            BooksDB.updateBooks(bookid, 1);
+        HistoryDB.showHistory(username); 
+        while(true)
+        {                    
+            System.out.print("Enter BookID your want to Confirm Return: ");
+            String input = sc.nextLine().trim();
+            if(input.isEmpty()) break;
+            int bookid = Integer.parseInt(input);
             Date return_date = new Date();
-            BooksDB.returnBooks(bookid, return_date);
-            System.out.println("Returned Book Successfully!");
-            UserMenu();
+            BooksDB.returnBooks( bookid, return_date);
+            HistoryDB.showHistory(username); 
+        }
+    }
+    
+    public static void renewBooks() throws SQLException
+    {
+        System.out.print("Enter Uername your want to Confirm: ");
+        String username = sc.next(); sc.nextLine(); 
+        if(LoginDB.checkUserName(username) == false ) 
+        {
+            System.out.println("Username Invalid! Please Enter another Username.");
+            renewBooks();
+        }
+        HistoryDB.showHistory(username); 
+        while(true)
+        {                    
+            System.out.print("Enter BookID your want to Confirm Renew: ");
+            String input = sc.nextLine().trim();
+            if(input.isEmpty()) break;
+            int bookid = Integer.parseInt(input);
+            Date renew_date = new Date();
+            BooksDB.renewBooks( bookid, renew_date);
+            HistoryDB.showHistory(username); 
         }
     }
     
@@ -366,6 +518,67 @@ public class Main
     {
         HistoryDB.showHistory(saveUserName.toString());
         UserMenu();
+    }
+    
+    public static void addReview() throws SQLException
+    {
+        System.out.print("BookID: ");
+        int bookid = sc.nextInt(); sc.nextLine();
+        if(BooksDB.checkBookId(bookid) == true)
+        {
+            System.out.print("Rating (1-5): ");
+            int rating = sc.nextInt(); sc.nextLine();
+            System.out.print("Comment: ");
+            String comment = sc.nextLine();
+            BookReview newReview = new BookReview(bookid, saveUserName.toString(), rating, comment);
+            BookReviewDB.addReview(newReview);
+            System.out.println("✅ Review added.");
+            UserMenu();
+        }
+        else 
+        {
+            System.out.println("This Book is Invalid! Please Enter another BookID.");
+            addReview();
+        }
+    }
+    
+    public static void editReview() throws SQLException
+    {
+        System.out.print("Enter review BookID to edit: ");
+        int bookid = sc.nextInt(); sc.nextLine();
+        if(BookReviewDB.checkBookId(bookid) == true)
+        {
+            System.out.print("New Rating (1-5): ");
+            int newRating = sc.nextInt(); sc.nextLine();
+            System.out.print("New Comment: ");
+            String newComment = sc.nextLine();
+            BookReviewDB.updateReview(bookid, newRating, newComment);
+            System.out.println("✅ Review updated.");
+            UserMenu();
+        }
+        else 
+        {
+           System.out.println("This Book is Invalid! Please Enter another BookID.");
+           editReview(); 
+        }
+        
+    }
+    
+    public static void deleteReview() throws SQLException
+    {
+        System.out.print("Enter review BookID to delete: ");
+        int bookid = sc.nextInt(); sc.nextLine();
+        if(BookReviewDB.checkBookId(bookid) == true)
+        {
+            BookReviewDB.deleteReview(bookid);
+            UserMenu();
+        }
+        else 
+        {
+           System.out.println("This Book is Invalid! Please Enter another BookID.");
+           deleteReview(); 
+        }
+        System.out.println("✅ Review deleted.");
     }
     
     public static void information() throws SQLException
@@ -404,71 +617,125 @@ public class Main
             
         System.out.print("Choose an option: ");
         int choice = sc.nextInt(); sc.nextLine();
-        System.out.print("Enter Uername your want to Confirm: ");
-        String username = sc.next(); sc.nextLine(); 
-        
+        if(choice == 4) usersManagement();
+
         switch (choice)
         {
             case 1:
-                if(LoginDB.checkUserName(username) == false ) 
-                    {
-                        System.out.println("Username Invalid! Please Enter another Username.");
-                        confirmRequest();
-                    }
-                HistoryDB.showHistory(username); 
-                while(true)
-                {   
-                    System.out.print("Enter BookID your want to Confirm Borrow: ");
-                    String input = sc.nextLine().trim();
-                    if(input.isEmpty()) break;
-                    int bookid = Integer.parseInt(input);
-                    Date borrow_date = new Date();
-                    BooksDB.borrowBooks( bookid, borrow_date);
-                    HistoryDB.showHistory(username); 
-                }
+                borrowBooks();
                 confirmRequest();
                 break;
             case 2:
-                if(LoginDB.checkUserName(username) == false ) 
-                    {
-                        System.out.println("Username Invalid! Please Enter another Username.");
-                        confirmRequest();
-                    }
-                HistoryDB.showHistory(username); 
-                while(true)
-                {                    
-                    System.out.print("Enter BookID your want to Confirm Return: ");
-                    String input = sc.nextLine().trim();
-                    if(input.isEmpty()) break;
-                    int bookid = Integer.parseInt(input);
-                    Date return_date = new Date();
-                    BooksDB.returnBooks( bookid, return_date);
-                    HistoryDB.showHistory(username); 
-                }
+                returnBooks();
                 confirmRequest();
                 break;
             case 3:
-                if(LoginDB.checkUserName(username) == false ) 
-                    {
-                        System.out.println("Username Invalid! Please Enter another Username.");
-                        confirmRequest();
-                    }
-                HistoryDB.showHistory(username); 
-                while(true)
-                {                    
-                    System.out.print("Enter BookID your want to Confirm Renew: ");
-                    String input = sc.nextLine().trim();
-                    if(input.isEmpty()) break;
-                    int bookid = Integer.parseInt(input);
-                    Date borrow_date = new Date();
-                    BooksDB.borrowBooks( bookid, borrow_date);
-                    HistoryDB.showHistory(username); 
-                }
+                renewBooks();
                 confirmRequest();
                 break;
+        }
+    }
+    
+     public static void categoryManagement() throws SQLException 
+    {
+        System.out.println("\n==== CATEGORY MANAGEMENT ====");
+        System.out.println("1. Show Categories");
+        System.out.println("2. Add Category");
+        System.out.println("3. Delete Category");
+        System.out.println("4. Back to Admin Menu");
+        System.out.print("Choose an option: ");
+        int choice = sc.nextInt(); sc.nextLine();
+
+        switch (choice) 
+        {
+            case 1:
+                List<Category> list = CategoryDB.getAllCategories();
+                System.out.printf("%-15s | %-20s\n", "Category ID", "Category Name");
+                for (Category c : list) {
+                    System.out.printf("%-15d | %-20s\n", c.getCategoryId(), c.getCategoryName());
+                }
+                showBookofCategory();
+                break;
+
+            case 2:
+                addCategory();
+                break;
+
+            case 3:
+                deleteCategory();
+                break;
+                
             case 4:
-                usersManagement();
+                AdminMenu();
+                break;
+                
+            default:
+                System.out.println("Invalid choice. Please try again.");
+        }
+    }
+     
+    public static void showBookofCategory() throws SQLException
+    {
+        System.out.println("1. Show Books");
+        System.out.println("2. Exit");
+        System.out.print("Choose an option: ");
+        
+        int choice = sc.nextInt(); sc.nextLine();
+        switch (choice)
+        {
+            case 1:
+                System.out.print("Enter Category : ");
+                String category = sc.nextLine();
+                if(CategoryDB.checkCategoryName(category) == true)
+                {
+                    CategoryDB.showBookofCategory(category);
+                }
+                else 
+                {
+                    System.out.println("Category Invalid! Please Enter another CategoryID.");
+                    showBookofCategory();   
+                }
+            case 2:
+                categoryManagement();
                 break;
         }
+    }
+    
+    public static void addCategory() throws SQLException
+    {
+        System.out.print("Enter new Category ID: ");
+        int id = sc.nextInt(); sc.nextLine();
+        if(CategoryDB.checkCategoryID(id) == false)
+        {
+            System.out.print("Enter new Category Name: ");
+            String name = sc.nextLine();
+            CategoryDB.addCategory(new Category(id, name));
+            System.out.println("Category added successfully!");
+            categoryManagement();
+        }
+        else 
+        {
+            System.out.println("Category ID has existed! Please Enter anthor Category ID");
+            addCategory();
+        }
+    }
+    
+    
+    public static void deleteCategory() throws SQLException
+    {
+        System.out.print("Enter Category ID to delete: ");
+        int cid = sc.nextInt(); sc.nextLine();
+        if(CategoryDB.checkCategoryID(cid) == true)
+        {
+            CategoryDB.deleteCategory(cid);
+            System.out.println("Category deleted successfully!");
+            categoryManagement();
+        }
+        else
+        {
+            System.out.println("Category ID Invalid! Please Enter anthor Category ID");
+            deleteCategory();
+        }
+        
     }
 }

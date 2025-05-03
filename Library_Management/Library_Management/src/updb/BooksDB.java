@@ -27,11 +27,12 @@ public class BooksDB
                 book.setQuantity(rs.getInt("quantity"));
                 book.setPrice(rs.getInt("price"));
                 booklist.add(book);
-            }
-            System.out.printf("%-10s | %-10s | %-15s | %-10s | %-10s | %-10s | %-10s | %-10s\n", "BookID", "Tiltle", "PublishYear", "Author", "Category", "Quantity", "Price", "Status");
+            }     
+            System.out.printf("%-7s | %-50s | %-15s | %-30s | %-25s | %-10s |%-10s | %-10s\n", 
+                    "BookID", "Tiltle", "PublishYear", "Author", "Category", "Quantity", "Price", "Status");
             for(Books book : booklist)
             {
-                System.out.printf("%-10d | %-10s | %-15d | %-10s | %-10s | %-10d | %-10d |%-10s\n", 
+                System.out.printf("%-7d | %-50s | %-15d | %-30s | %-25s | %-10d |%-10d | %-10s\n", 
                 book.getBookId(), book.getTitle(), book.getPublishYear(), book.getAuthor(), book.getCategory(), book.getQuantity(), book.getPrice(),book.getStatus());
                 
             }
@@ -40,7 +41,7 @@ public class BooksDB
    
     public static void addBooks(Books book) throws SQLException
     {
-        String sql = "INSERT INTO books (bookid, title, publishyear, author,category, quantity, price) VALUE (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO books (bookid, title, publishyear, author,category, quantity, original_price) VALUE (?, ?, ?, ?, ?, ?, ?)";
         try(Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql))
         {
             stmt.setInt(1, book.getBookId());
@@ -49,7 +50,7 @@ public class BooksDB
             stmt.setString(4, book.getAuthor());
             stmt.setString(5, book.getCategory());
             stmt.setInt(6, book.getQuantity());
-            stmt.setInt(7, book.getPrice());
+            stmt.setInt(7, book.getOriginalPrice());
             stmt.executeUpdate();
         }
     }
@@ -72,6 +73,17 @@ public class BooksDB
         try(Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql))
         {
             stmt.setTimestamp(1, new java.sql.Timestamp(borrow_date.getTime()));
+            stmt.setInt(2, bookid);
+            stmt.executeUpdate();
+        }
+    }
+    
+    public static void renewBooks(int bookid, Date renew_date) throws SQLException
+    {
+        String sql = "UPDATE history SET renew_date = ? WHERE bookid = ?";
+        try(Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql))
+        {
+            stmt.setTimestamp(1, new java.sql.Timestamp(renew_date.getTime()));
             stmt.setInt(2, bookid);
             stmt.executeUpdate();
         }
@@ -124,15 +136,69 @@ public class BooksDB
             ResultSet rs = stmt.executeQuery();
             if (rs.next())
             {
-                int count = rs.getInt("cnt");
-                return count > 0;
+                return rs.getInt("cnt") > 0;
             }
         }
         catch (SQLException e)
         {
             return false;
         }
+        return false; 
+    }
+    
+    public static boolean checkRenewDate(int bookid) throws SQLException
+    {
+        String sql = "SELECT * FROM history WHERE bookid = ? ORDER BY request_date DESC LIMIT 1" ;
+        try(Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql))
+        {
+            stmt.setInt(1, bookid);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) 
+            {
+                return rs.getTimestamp("renew_date") != null;
+            }
+        }
         return false;
-            
+    }
+    
+    public static void updateDiscount(int bookId, int discountPercent) 
+    {
+    String setOriginalSQL = "UPDATE books SET original_price = price WHERE bookid = ? AND original_price IS NULL";
+    String applyDiscountSQL = "UPDATE books SET price = original_price * (100 - ?) / 100 WHERE bookid = ?";
+    String restorePriceSQL = "UPDATE books SET price = original_price, original_price = NULL WHERE bookid = ?";
+
+        try (Connection conn = DBConnection.getConnection()) 
+        {
+            if (discountPercent == 0) 
+            {
+                // Restore original price
+                try (PreparedStatement stmt = conn.prepareStatement(restorePriceSQL)) 
+                {
+                    stmt.setInt(1, bookId);
+                    stmt.executeUpdate();
+                }
+            } 
+            else 
+            {
+                // Set original price only once
+                try (PreparedStatement stmt = conn.prepareStatement(setOriginalSQL)) 
+                {
+                    stmt.setInt(1, bookId);
+                    stmt.executeUpdate();
+                }
+
+                // Apply discount to original_price
+                try (PreparedStatement stmt = conn.prepareStatement(applyDiscountSQL)) 
+                {
+                    stmt.setInt(1, discountPercent);
+                    stmt.setInt(2, bookId);
+                    stmt.executeUpdate();
+                }
+            }
+        } 
+        catch (SQLException e) 
+        {
+            e.printStackTrace();
+        }
     }
 }

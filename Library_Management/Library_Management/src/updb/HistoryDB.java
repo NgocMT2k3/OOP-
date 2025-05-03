@@ -30,7 +30,8 @@ public class HistoryDB
             System.out.printf("%-20s | %-6s | %-25s |%-25s | %-25s | %-10s\n","UserName", "BookID", "Request_Date","Borrow_Date", "Return_Date", "Status" );
             for(History h : historylist)
             {
-                System.out.printf("%-20s | %-6d | %-25s |%-25s | %-25s | %-10s\n ",h.getUsername(), h.getBookId(), h.getRequestDate(), h.getBorrowDate(), h.getReturnDate(), h.getStatus());
+                System.out.printf("%-20s | %-6d | %-25s |%-25s | %-25s | %-10s ",h.getUsername(), h.getBookId(), h.getRequestDate(), h.getBorrowDate(), h.getReturnDate(), h.getStatus());
+                System.out.println();
             }
         }
     }
