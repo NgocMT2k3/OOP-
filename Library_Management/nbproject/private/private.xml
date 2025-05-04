@@ -4,6 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/DDDD/Library_Management/Library_Management/src/Main.java</file>
+            <file>file:/D:/DDDD/Library_Management/Library_Management/src/model/Category.java</file>
+            <file>file:/D:/DDDD/Library_Management/Library_Management/src/updb/CategoryDB.java</file>
+            <file>file:/D:/DDDD/Library_Management/Library_Management/src/updb/BooksDB.java</file>
+            <file>file:/D:/DDDD/Library_Management/Library_Management/src/model/Books.java</file>
+            <file>file:/D:/DDDD/Library_Management/Library_Management/src/updb/HistoryDB.java</file>
         </group>
     </open-files>
 </project-private>
