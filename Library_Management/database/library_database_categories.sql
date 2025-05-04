@@ -16,29 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `accounts`
+-- Table structure for table `categories`
 --
 
-DROP TABLE IF EXISTS `accounts`;
+DROP TABLE IF EXISTS `categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `accounts` (
-  `username` varchar(50) NOT NULL,
-  `passwords` varchar(50) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `phonenumber` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`username`)
+CREATE TABLE `categories` (
+  `category_id` int NOT NULL,
+  `category_name` varchar(255) NOT NULL,
+  `totalbook` int DEFAULT NULL,
+  PRIMARY KEY (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `accounts`
+-- Dumping data for table `categories`
 --
 
-LOCK TABLES `accounts` WRITE;
-/*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES ('1','1','1','1'),('123','123','12','123'),('dat','123','dat@gmail.com','0231'),('ngoc','123','ngoc@gmail.com','0123'),('user1','123','user@gmail.com','0111');
-/*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
+LOCK TABLES `categories` WRITE;
+/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
+INSERT INTO `categories` VALUES (1,'An toàn thông tin',3),(2,'Công nghệ thông tin',14),(3,'Viễn thông',3),(4,'CNTT - Viễn thông',7),(5,'Công nghệ phần mềm',9),(6,'Kinh tế số',3),(7,'Điện tử viễn thông',4),(8,'Trí tuệ nhân tạo',6),(9,'Hệ thống thông tin',7),(10,'Kinh tế học',11),(11,'Marketing',8),(12,'Tài chính',5),(13,'Quản trị kinh doanh',5),(14,'Quản Trị Chiến Lược',NULL);
+/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

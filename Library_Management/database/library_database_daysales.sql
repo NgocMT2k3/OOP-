@@ -16,29 +16,26 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `accounts`
+-- Table structure for table `daysales`
 --
 
-DROP TABLE IF EXISTS `accounts`;
+DROP TABLE IF EXISTS `daysales`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `accounts` (
-  `username` varchar(50) NOT NULL,
-  `passwords` varchar(50) NOT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `phonenumber` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`username`)
+CREATE TABLE `daysales` (
+  `day` date DEFAULT NULL,
+  `sales` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `accounts`
+-- Dumping data for table `daysales`
 --
 
-LOCK TABLES `accounts` WRITE;
-/*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES ('1','1','1','1'),('123','123','12','123'),('dat','123','dat@gmail.com','0231'),('ngoc','123','ngoc@gmail.com','0123'),('user1','123','user@gmail.com','0111');
-/*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
+LOCK TABLES `daysales` WRITE;
+/*!40000 ALTER TABLE `daysales` DISABLE KEYS */;
+INSERT INTO `daysales` VALUES ('2025-05-04',554440),('2025-05-05',NULL),('2025-05-06',NULL),('2025-05-03',NULL);
+/*!40000 ALTER TABLE `daysales` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -50,4 +47,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-04 19:40:11
+-- Dump completed on 2025-05-04 19:40:10
