@@ -154,12 +154,15 @@ public class BooksDB
             stmt.setInt(1, bookid);
             stmt.setString(2, username);
             ResultSet rs = stmt.executeQuery();
-            if(rs.next())
+            while(rs.next())
             {
-                return "returned".equals(rs.getString("status"));
+                if (!"returned".equals(rs.getString("status")))
+                {
+                    return false;
+                }
             }
         }
-        return false;
+        return true;
     }
     public static boolean checkRenewDate(int bookid) throws SQLException
     {

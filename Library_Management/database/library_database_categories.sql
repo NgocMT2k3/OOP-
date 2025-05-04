@@ -36,7 +36,7 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,'An toàn thông tin',3),(2,'Công nghệ thông tin',14),(3,'Viễn thông',3),(4,'CNTT - Viễn thông',7),(5,'Công nghệ phần mềm',9),(6,'Kinh tế số',3),(7,'Điện tử viễn thông',4),(8,'Trí tuệ nhân tạo',6),(9,'Hệ thống thông tin',7),(10,'Kinh tế học',11),(11,'Marketing',8),(12,'Tài chính',5),(13,'Quản trị kinh doanh',5),(14,'Quản Trị Chiến Lược',NULL);
+INSERT INTO `categories` VALUES (1,'An toàn thông tin',3),(2,'Công nghệ thông tin',13),(3,'Viễn thông',3),(4,'CNTT - Viễn thông',7),(5,'Công nghệ phần mềm',9),(6,'Kinh tế số',2),(7,'Điện tử viễn thông',3),(8,'Trí tuệ nhân tạo',6),(9,'Hệ thống thông tin',7),(10,'Kinh tế học',11),(11,'Marketing',8),(12,'Tài chính',5),(13,'Quản trị kinh doanh',5),(14,'Quản Trị Chiến Lược',NULL),(15,'Tài chính',5),(16,'Tư tưởng',12),(17,'Tư tưởng',12);
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-04 19:40:11
+-- Dump completed on 2025-05-04 21:36:56

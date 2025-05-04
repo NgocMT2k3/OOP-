@@ -40,7 +40,7 @@ CREATE TABLE `history` (
 
 LOCK TABLES `history` WRITE;
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
-INSERT INTO `history` VALUES ('ngoc',1,98000,'2025-05-03 18:33:05','2025-05-03 18:38:49','2025-05-03 18:35:22',NULL,'borrowed'),('ngoc',2,84550,'2025-05-03 18:33:08','2025-05-03 18:33:28',NULL,NULL,'borrowed'),('ngoc',3,86130,'2025-05-03 18:33:09','2025-05-03 18:33:29',NULL,NULL,'borrowed'),('ngoc',4,89760,'2025-05-03 18:33:11','2025-05-03 18:41:25',NULL,NULL,'borrowed');
+INSERT INTO `history` VALUES ('ngoc',1,98000,'2025-05-03 18:33:05','2025-05-04 14:12:33','2025-05-03 18:35:22','2025-05-04 14:12:52','returned'),('ngoc',2,84550,'2025-05-03 18:33:08','2025-05-03 18:33:28',NULL,NULL,'borrowed'),('ngoc',3,86130,'2025-05-03 18:33:09','2025-05-04 14:17:06',NULL,'2025-05-04 14:17:23','returned'),('ngoc',4,89760,'2025-05-03 18:33:11','2025-05-03 18:41:25',NULL,NULL,'borrowed'),('ngoc',7,113000,'2025-05-04 13:17:24','2025-05-04 14:18:08',NULL,NULL,'borrowed'),('ngoc',8,94000,'2025-05-04 14:11:40',NULL,NULL,'2025-05-04 14:16:42','returned'),('ngoc',5,87120,'2025-05-04 14:11:48',NULL,NULL,'2025-05-04 14:15:32','returned');
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -78,6 +78,31 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_trigger` BEFORE INSERT ON `history` FOR EACH ROW BEGIN
+    IF NEW.return_date IS NOT NULL THEN
+        SET NEW.status = 'returned';
+    ELSEIF NEW.borrow_date IS NOT NULL THEN
+        SET NEW.status = 'borrowed';
+    ELSEIF NEW.request_date IS NOT NULL THEN
+        SET NEW.status = 'requested';
+    ELSE
+        SET NEW.status = NULL;
+    END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `update_status_on_update` BEFORE UPDATE ON `history` FOR EACH ROW BEGIN
     IF NEW.return_date IS NOT NULL THEN
         SET NEW.status = 'returned';
     ELSEIF NEW.borrow_date IS NOT NULL THEN
@@ -161,4 +186,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-04 19:40:10
+-- Dump completed on 2025-05-04 21:36:54
